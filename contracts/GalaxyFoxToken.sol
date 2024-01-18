@@ -32,17 +32,16 @@ interface IUniFactory {
 contract GalaxyFox is ERC20, Ownable {
     Tax public buyTax = Tax(1000, 500, 500); // 6 bytes
     Tax public sellTax = Tax(1000, 500, 500); // 6 bytes
-    address payable public liquidityHolder; // 20 bytes
 
+    address payable public liquidityHolder; // 20 bytes
     address payable public marketingHolder; // 20 bytes
     address payable public ecosystemHolder; // 20 bytes
+    bool public taxEnabled = false;
 
     IUniFactory public immutable uniFactory; // 20 bytes
     IUniswapV2Router02 public immutable uniRouter; // 20 bytes
     address public immutable weth; // 20 bytes
-    address public uniPair; // 20 bytes
-
-    bool public taxEnabled = false;
+    address public immutable uniPair; // 20 bytes
 
     mapping(address => bool) public isExcludedFromFee;
 
