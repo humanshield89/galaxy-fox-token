@@ -234,7 +234,7 @@ describe("GalaxyFox", () => {
 
     // approve 10000 token to uniswap router
 
-    await gfox.approve(await uniRouter.getAddress(), 10000n * 10n ** 18n);
+    await gfox.approve(await uniRouter.getAddress(), 100000n * 10n ** 18n);
 
     // owner creates lp
     await uniRouter
@@ -242,7 +242,7 @@ describe("GalaxyFox", () => {
       //@ts-ignore
       .addLiquidityETH(
         await gfox.getAddress(),
-        10000n * 10n ** 18n,
+        100000n * 10n ** 18n,
         0,
         0,
         owner.address,
@@ -261,7 +261,7 @@ describe("GalaxyFox", () => {
       expect(token0).to.equal(100n * 10n ** 18n);
       expect(token1).to.equal(10000n * 10n ** 18n);
     } else {
-      expect(token0).to.equal(10000n * 10n ** 18n);
+      expect(token0).to.equal(100000n * 10n ** 18n);
       expect(token1).to.equal(100n * 10n ** 18n);
     }
   });
@@ -597,6 +597,9 @@ describe("GalaxyFox", () => {
       bob,
     ] = await ethers.getSigners();
 
+    // owner balance
+    const ownerBalance = await gfox.balanceOf(owner.address);
+
     // set taxes back
     await gfox
       .connect(owner)
@@ -643,5 +646,55 @@ describe("GalaxyFox", () => {
       expectedOut + liquidityReserves,
       3n * 10n ** 16n
     );
+  });
+
+  it("should honor maxVolume", async () => {
+    const [
+      owner,
+      ecosystem,
+      autoLP,
+      marketing,
+      alice,
+      bob1,
+      carl,
+      fakeLP,
+      bob,
+      newUser,
+    ] = await ethers.getSigners();
+
+    const totalSupply = await gfox.totalSupply();
+    const blockTime = (await ethers.provider.getBlock("latest"))?.timestamp;
+
+    const day = BigInt(blockTime) / 86400n;
+
+    const maxVolume = totalSupply / 1000n;
+
+    // set max volume to 0.1% of total supply
+    await gfox.connect(owner).setMaxDailyVolume(maxVolume);
+
+    // owner can transfer 0.1% of total supply
+    await gfox.connect(owner).transfer(newUser.address, maxVolume + 1n);
+
+    // newUser fails to transfer 0.1% of total supply
+    await expect(
+      gfox.connect(newUser).transfer(owner.address, maxVolume + 1n)
+    ).to.be.revertedWith("GalaxyFox: max daily volume exceeded");
+
+    // new user can transfer 0.1% of total supply
+    await gfox.connect(newUser).transfer(owner.address, maxVolume);
+
+    // fails to transfer 1n
+    await expect(
+      gfox.connect(newUser).transfer(owner.address, 1n)
+    ).to.be.revertedWith("GalaxyFox: max daily volume exceeded");
+
+    // move time by 1 day
+    await ethers.provider.send("evm_increaseTime", [86400]);
+
+    // mine
+    await ethers.provider.send("evm_mine", []);
+
+    // newUser can transfer 1n
+    await gfox.connect(newUser).transfer(owner.address, 1n);
   });
 });

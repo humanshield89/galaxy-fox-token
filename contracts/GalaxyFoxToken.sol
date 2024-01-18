@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
 // Uncomment this line to use console.log
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 uint256 constant INITIAL_SUPPLY = 5000000000 * 10 ** 18;
 
@@ -39,6 +39,7 @@ contract GalaxyFox is ERC20, Ownable {
 
     IUniFactory public immutable uniFactory; // 20 bytes
     IUniswapV2Router02 public immutable uniRouter; // 20 bytes
+    address public immutable weth; // 20 bytes
     address public uniPair; // 20 bytes
 
     bool public taxEnabled = false;
@@ -73,11 +74,10 @@ contract GalaxyFox is ERC20, Ownable {
         uniRouter = _uniswapV2Router;
         uniFactory = _uniswapV2Factory;
 
+        weth = _uniswapV2Router.WETH();
+
         // Create a uniswap pair for this new token
-        uniPair = _uniswapV2Factory.createPair(
-            address(this),
-            _uniswapV2Router.WETH()
-        );
+        uniPair = _uniswapV2Factory.createPair(address(this), weth);
 
         // approve token transfer to cover all future transfereFrom calls
         _approve(address(this), address(_uniswapV2Router), type(uint256).max);
@@ -91,6 +91,8 @@ contract GalaxyFox is ERC20, Ownable {
         isExcludedFromDailyVolume[_ownerArg] = true;
 
         isExcludedFromDailyVolume[uniPair] = true;
+
+        isExcludedFromDailyVolume[address(this)] = true;
     }
 
     receive() external payable {
@@ -122,18 +124,14 @@ contract GalaxyFox is ERC20, Ownable {
         address recipient,
         uint256 amount
     ) public virtual override returns (bool) {
-        require(
-            amount <= allowance(sender, _msgSender()),
-            "Transfer amount exceeds allowance"
-        );
+        uint256 allowance = allowance(sender, _msgSender());
+        require(amount <= allowance, "Transfer amount exceeds allowance");
 
+        // overflow is checked above
         unchecked {
-            // overflow is checked above
-            _approve(
-                sender,
-                _msgSender(),
-                allowance(sender, _msgSender()) - amount
-            );
+            // decrease allowance if not max approved
+            if (allowance < type(uint256).max)
+                _approve(sender, _msgSender(), allowance - amount, true);
         }
 
         _customTransfer(sender, recipient, amount);
@@ -355,6 +353,10 @@ contract GalaxyFox is ERC20, Ownable {
         maxDailyVolume = maxDailyVolumeArg;
     }
 
+    // using uint256 is cheaper than using bool
+    // because there will be no extra work to read it
+    // sunce when used we always return it back to 0
+    // it will trigger a refund
     uint256 inswap = 0;
 
     /**
@@ -376,9 +378,9 @@ contract GalaxyFox is ERC20, Ownable {
 
             uint256 newBalance = address(this).balance;
 
-            (uint amountToken, , ) = _addLiquidity(otherHalf, newBalance);
+            _addLiquidity(otherHalf, newBalance);
 
-            liquidityReserves -= amountToken;
+            liquidityReserves = 0;
         }
         inswap = 0;
     }
@@ -387,9 +389,7 @@ contract GalaxyFox is ERC20, Ownable {
         // generate the uniswap pair path of token -> weth
         address[] memory path = new address[](2);
         path[0] = address(this);
-        path[1] = uniRouter.WETH();
-
-        // We do not need to approve as already approved max (also check the _approve function override)
+        path[1] = weth;
 
         // make the swap
         uniRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
@@ -401,32 +401,14 @@ contract GalaxyFox is ERC20, Ownable {
         );
     }
 
-    function _addLiquidity(
-        uint256 tokenAmount,
-        uint256 ethAmount
-    ) internal returns (uint, uint, uint) {
-        // add the liquidity
-        return
-            uniRouter.addLiquidityETH{value: ethAmount}(
-                address(this),
-                tokenAmount,
-                0,
-                0,
-                liquidityHolder,
-                block.timestamp
-            );
-    }
-
-    // override _approve to add a check for max approval
-    function _approve(
-        address owner,
-        address spender,
-        uint256 amount,
-        bool emitEvent
-    ) internal virtual override {
-        // if allowance is already max then return
-        if (allowance(owner, spender) == type(uint256).max) return;
-
-        super._approve(owner, spender, amount, emitEvent);
+    function _addLiquidity(uint256 tokenAmount, uint256 ethAmount) internal {
+        uniRouter.addLiquidityETH{value: ethAmount}(
+            address(this),
+            tokenAmount,
+            0,
+            0,
+            liquidityHolder,
+            block.timestamp
+        );
     }
 }
