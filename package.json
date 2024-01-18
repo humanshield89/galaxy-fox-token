@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write --plugin=prettier-plugin-solidity \"./contracts/**/*.sol\" \"./**/**/*.ts\"",
-    "build": "sol-merger --export-plugin SPDXLicenseRemovePlugin \"./contracts/**/*.sol\" ./build"
+    "build": "sol-merger --export-plugin SPDXLicenseRemovePlugin \"./contracts/**/*.sol\" ./build",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage"
   },
   "keywords": [],
   "author": "",
