@@ -423,24 +423,29 @@ contract GalaxyFox is ERC20, Ownable {
         path[0] = address(this);
         path[1] = weth;
 
-        // make the swap
-        uniRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
-            tokenAmount,
-            0, // accept any amount of ETH
-            path,
-            address(this),
-            block.timestamp
-        );
+        // make the swap safely, do not revert if swap fails
+        try
+            uniRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
+                tokenAmount,
+                0, // accept any amount of ETH
+                path,
+                address(this),
+                block.timestamp
+            )
+        {} catch {}
     }
 
     function _addLiquidity(uint256 tokenAmount, uint256 ethAmount) internal {
-        uniRouter.addLiquidityETH{value: ethAmount}(
-            address(this),
-            tokenAmount,
-            0,
-            0,
-            liquidityHolder,
-            block.timestamp
-        );
+        // do not revert if addlp fails
+        try
+            uniRouter.addLiquidityETH{value: ethAmount}(
+                address(this),
+                tokenAmount,
+                0,
+                0,
+                liquidityHolder,
+                block.timestamp
+            )
+        {} catch {}
     }
 }
