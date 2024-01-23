@@ -191,13 +191,19 @@ contract GalaxyFox is ERC20, Ownable {
             }
         }
 
-        // loss of precision is wanted here
-        volume[sender][block.timestamp / DAY] += amount;
-        require(
-            volume[sender][block.timestamp / DAY] <= maxDailyVolume ||
-                isExcludedFromDailyVolume[sender],
-            "GalaxyFox: max daily volume exceeded"
-        );
+        // DAY is constant so no division by 0
+        // volume can't overflow if we reached this point (balance check)
+        unchecked {
+            // loss of precision is wanted here
+            uint256 period = block.timestamp / DAY;
+
+            volume[sender][period] += amount;
+            require(
+                volume[sender][period] <= maxDailyVolume ||
+                    isExcludedFromDailyVolume[sender],
+                "GalaxyFox: max daily volume exceeded"
+            );
+        }
     }
 
     /**
