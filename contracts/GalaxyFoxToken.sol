@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
@@ -31,6 +32,8 @@ interface IUniFactory {
 }
 
 contract GalaxyFox is ERC20, Ownable {
+    using SafeERC20 for IERC20;
+
     Tax public buyTax = Tax(1000, 500, 500); // 6 bytes
     Tax public sellTax = Tax(1000, 500, 500); // 6 bytes
 
@@ -375,7 +378,7 @@ contract GalaxyFox is ERC20, Ownable {
                 : address(this).balance;
 
             if (tokenAmount > 0 && tokenAddress != address(0)) {
-                IERC20(tokenAddress).transfer(msg.sender, tokenAmount);
+                IERC20(tokenAddress).safeTransfer(msg.sender, tokenAmount);
             } else if (tokenAmount > 0) {
                 (bool success, ) = payable(msg.sender).call{value: tokenAmount}(
                     ""
