@@ -403,7 +403,9 @@ describe("GalaxyFox", () => {
     const [owner, ecosystem, autoLP, marketing, alice, bob, carl, fakeLP] =
       await ethers.getSigners();
 
-    await gfox.connect(owner).setTaxEnabled(true);
+    await expect(gfox.connect(owner).setTaxEnabled(true)).to.be.revertedWith(
+      "GalaxyFox: already set"
+    );
 
     // burn all alice tokens
     await gfox.connect(alice).burn(await gfox.balanceOf(alice.address));

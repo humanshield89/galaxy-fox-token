@@ -205,6 +205,7 @@ contract GalaxyFox is ERC20, Ownable {
      * @param taxEnabledArg true to enable tax, false to disable
      */
     function setTaxEnabled(bool taxEnabledArg) public onlyOwner {
+        require(taxEnabled != taxEnabledArg, "GalaxyFox: already set");
         taxEnabled = taxEnabledArg;
 
         emit TaxEnabled(taxEnabledArg);
@@ -217,6 +218,10 @@ contract GalaxyFox is ERC20, Ownable {
     function setMiniBeforeLiquify(
         uint256 miniBeforeLiquifyArg
     ) public onlyOwner {
+        require(
+            miniBeforeLiquifyArg != miniBeforeLiquify,
+            "GalaxyFox: already set"
+        );
         miniBeforeLiquify = miniBeforeLiquifyArg;
 
         emit MiniBeforeLiquifyChanged(miniBeforeLiquifyArg);
@@ -231,6 +236,10 @@ contract GalaxyFox is ERC20, Ownable {
         address account,
         bool excluded
     ) public onlyOwner {
+        require(
+            isExcludedFromFee[account] != excluded,
+            "GalaxyFox: already set"
+        );
         isExcludedFromFee[account] = excluded;
 
         emit ExeededFromFee(account, excluded);
@@ -242,6 +251,7 @@ contract GalaxyFox is ERC20, Ownable {
      * @param isPairArg  true if the address is a pair, false otherwise
      */
     function setPair(address pair, bool isPairArg) public onlyOwner {
+        require(isPair[pair] != isPairArg, "GalaxyFox: already set");
         isPair[pair] = isPairArg;
 
         emit Pair(pair, isPairArg);
@@ -254,6 +264,7 @@ contract GalaxyFox is ERC20, Ownable {
     function setEcosystemHolder(
         address payable _ecosystemHolder
     ) public onlyOwner {
+        require(_ecosystemHolder != ecosystemHolder, "GalaxyFox: already set");
         require(_ecosystemHolder != address(0), "GalaxyFox: zero address");
         ecosystemHolder = _ecosystemHolder;
 
@@ -267,6 +278,7 @@ contract GalaxyFox is ERC20, Ownable {
     function setMarketingHolder(
         address payable _marketingHolder
     ) public onlyOwner {
+        require(_marketingHolder != marketingHolder, "GalaxyFox: already set");
         require(_marketingHolder != address(0), "GalaxyFox: zero address");
         marketingHolder = _marketingHolder;
 
@@ -280,6 +292,7 @@ contract GalaxyFox is ERC20, Ownable {
     function setLiquidityHolder(
         address payable _liquidityHolder
     ) public onlyOwner {
+        require(_liquidityHolder != liquidityHolder, "GalaxyFox: already set");
         require(_liquidityHolder != address(0), "GalaxyFox: zero address");
         liquidityHolder = _liquidityHolder;
         emit LiquidityHolder(liquidityHolder, _liquidityHolder);
@@ -366,6 +379,10 @@ contract GalaxyFox is ERC20, Ownable {
         address account,
         bool excluded
     ) public onlyOwner {
+        require(
+            isExcludedFromDailyVolume[account] != excluded,
+            "GalaxyFox: already set"
+        );
         isExcludedFromDailyVolume[account] = excluded;
 
         emit ExcludedFromDailyVolume(account, excluded);
@@ -376,6 +393,7 @@ contract GalaxyFox is ERC20, Ownable {
      * @param maxDailyVolumeArg The new max daily volume
      */
     function setMaxDailyVolume(uint256 maxDailyVolumeArg) public onlyOwner {
+        require(maxDailyVolumeArg != maxDailyVolume, "GalaxyFox: already set");
         // require that the max daily volume is at least 0.1% of the total supply
         require(
             maxDailyVolumeArg >= totalSupply() / 1000,
