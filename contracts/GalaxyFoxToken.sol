@@ -55,6 +55,18 @@ contract GalaxyFox is ERC20, Ownable {
     uint256 public liquidityReserves;
     uint256 public miniBeforeLiquify;
 
+    event TaxEnabled(bool enabled);
+    event ExeededFromFee(address account, bool excluded);
+    event Pair(address pair, bool isPair);
+    event EcosystemHolder(address oldHolder, address holder);
+    event MarketingHolder(address oldHolder, address holder);
+    event LiquidityHolder(address oldHolder, address holder);
+    event SellTaxChanged(uint16 liquidity, uint16 marketing, uint16 ecosystem);
+    event BuyTaxChanged(uint16 liquidity, uint16 marketing, uint16 ecosystem);
+    event ExcludedFromDailyVolume(address account, bool excluded);
+    event MaxDailyVolumeChanged(uint256 maxDailyVolume);
+    event MiniBeforeLiquifyChanged(uint256 miniBeforeLiquifyArg);
+
     constructor(
         // to allow for easy testing/deploy on behalf of someone else
         address _ownerArg,
@@ -193,6 +205,8 @@ contract GalaxyFox is ERC20, Ownable {
      */
     function setTaxEnabled(bool taxEnabledArg) public onlyOwner {
         taxEnabled = taxEnabledArg;
+
+        emit TaxEnabled(taxEnabledArg);
     }
 
     /**
@@ -203,6 +217,8 @@ contract GalaxyFox is ERC20, Ownable {
         uint256 miniBeforeLiquifyArg
     ) public onlyOwner {
         miniBeforeLiquify = miniBeforeLiquifyArg;
+
+        emit MiniBeforeLiquifyChanged(miniBeforeLiquifyArg);
     }
 
     /**
@@ -215,6 +231,8 @@ contract GalaxyFox is ERC20, Ownable {
         bool excluded
     ) public onlyOwner {
         isExcludedFromFee[account] = excluded;
+
+        emit ExeededFromFee(account, excluded);
     }
 
     /**
@@ -224,6 +242,8 @@ contract GalaxyFox is ERC20, Ownable {
      */
     function setPair(address pair, bool isPairArg) public onlyOwner {
         isPair[pair] = isPairArg;
+
+        emit Pair(pair, isPairArg);
     }
 
     /**
@@ -235,6 +255,8 @@ contract GalaxyFox is ERC20, Ownable {
     ) public onlyOwner {
         require(_ecosystemHolder != address(0), "GalaxyFox: zero address");
         ecosystemHolder = _ecosystemHolder;
+
+        emit EcosystemHolder(ecosystemHolder, _ecosystemHolder);
     }
 
     /**
@@ -246,6 +268,8 @@ contract GalaxyFox is ERC20, Ownable {
     ) public onlyOwner {
         require(_marketingHolder != address(0), "GalaxyFox: zero address");
         marketingHolder = _marketingHolder;
+
+        emit MarketingHolder(marketingHolder, _marketingHolder);
     }
 
     /**
@@ -257,6 +281,7 @@ contract GalaxyFox is ERC20, Ownable {
     ) public onlyOwner {
         require(_liquidityHolder != address(0), "GalaxyFox: zero address");
         liquidityHolder = _liquidityHolder;
+        emit LiquidityHolder(liquidityHolder, _liquidityHolder);
     }
 
     /**
@@ -275,6 +300,8 @@ contract GalaxyFox is ERC20, Ownable {
             "GalaxyFox: tax too high"
         );
         sellTax = Tax(_liquidity, _marketing, _ecosystem);
+
+        emit SellTaxChanged(_liquidity, _marketing, _ecosystem);
     }
 
     /**
@@ -293,6 +320,8 @@ contract GalaxyFox is ERC20, Ownable {
             "GalaxyFox: tax too high"
         );
         buyTax = Tax(_liquidity, _marketing, _ecosystem);
+
+        emit BuyTaxChanged(_liquidity, _marketing, _ecosystem);
     }
 
     /**
@@ -337,6 +366,8 @@ contract GalaxyFox is ERC20, Ownable {
         bool excluded
     ) public onlyOwner {
         isExcludedFromDailyVolume[account] = excluded;
+
+        emit ExcludedFromDailyVolume(account, excluded);
     }
 
     /**
@@ -350,6 +381,8 @@ contract GalaxyFox is ERC20, Ownable {
             "GalaxyFox: max daily volume too low"
         );
         maxDailyVolume = maxDailyVolumeArg;
+
+        emit MaxDailyVolumeChanged(maxDailyVolumeArg);
     }
 
     // using uint256 is cheaper than using bool
