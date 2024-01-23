@@ -365,7 +365,7 @@ contract GalaxyFox is ERC20, Ownable {
         _liquify();
     }
 
-    function _liquify() public {
+    function _liquify() private {
         if (inswap == 1) return;
         inswap = 1;
         if (liquidityReserves > miniBeforeLiquify) {
