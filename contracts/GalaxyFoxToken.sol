@@ -79,8 +79,20 @@ contract GalaxyFox is ERC20, Ownable {
     ) ERC20("Galaxy Fox", "GFOX") Ownable(_ownerArg) {
         _mint(_ownerArg, INITIAL_SUPPLY);
 
+        require(
+            _ecosystemHolder != address(0),
+            "GalaxyFox: ecosystem holder is the zero address"
+        );
         ecosystemHolder = _ecosystemHolder;
+        require(
+            _marketingHolder != address(0),
+            "GalaxyFox: marketing holder is the zero address"
+        );
         marketingHolder = _marketingHolder;
+        require(
+            _liquidityHolder != address(0),
+            "GalaxyFox: liquidity holder is the zero address"
+        );
         liquidityHolder = _liquidityHolder;
 
         uniRouter = _uniswapV2Router;
