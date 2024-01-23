@@ -2,6 +2,10 @@
 
 This repo contains the smart contract for the Galaxy Fox token.
 
+## Environment Variables
+
+look at `.env.example` for the required environment variables, and create a `.env` file with the correct values.
+
 ## How to run
 
 1. Install dependencies
