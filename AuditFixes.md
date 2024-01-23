@@ -2,15 +2,15 @@
 
 ## ISSUE 1 (page 8)
 
-resolved => commit => 3ff46c16df0605d097ed006fa9ed584398f1659c
+resolved => commit => [3ff46c16df0605d097ed006fa9ed584398f1659c](https://github.com/humanshield89/galaxy-fox-token/commit/3ff46c16df0605d097ed006fa9ed584398f1659c)
 
 ## Issue 2 (page 9)
 
-resolved => commit => 77afcebf684dcfc39c0e7d90c9eefc5bad1a8f05
+resolved => commit => [77afcebf684dcfc39c0e7d90c9eefc5bad1a8f05](https://github.com/humanshield89/galaxy-fox-token/commit/77afcebf684dcfc39c0e7d90c9eefc5bad1a8f05)
 
 ## Issue 3 (page 10)
  
-resolved => commit => f35b98a305ff0ee635e40db550bfaa756cd85bd1
+resolved => commit => [f35b98a305ff0ee635e40db550bfaa756cd85bd1](https://github.com/humanshield89/galaxy-fox-token/commit/f35b98a305ff0ee635e40db550bfaa756cd85bd1)
 
 **Details:**
   
@@ -18,19 +18,19 @@ There are only few ways to make the main pair changeable without introducing the
 
 ## Issue 4 (page 12)
 
-resolved => 2f082e57623fbd6565fbf4786bc631bd7b411c1c
+resolved => [2f082e57623fbd6565fbf4786bc631bd7b411c1c](https://github.com/humanshield89/galaxy-fox-token/commit/2f082e57623fbd6565fbf4786bc631bd7b411c1c)
 
 ## Issue 5 (page 13)
 
-resolved => 6effce257e312cb08d362068cec9ce7ec7787cf8
+resolved => [6effce257e312cb08d362068cec9ce7ec7787cf8](https://github.com/humanshield89/galaxy-fox-token/commit/6effce257e312cb08d362068cec9ce7ec7787cf8)
 
 ## Issue 6 (page 14)
 
-resolved => c465c73160d9f81f448236ec83bd0888223dfec4
+resolved => [c465c73160d9f81f448236ec83bd0888223dfec4](https://github.com/humanshield89/galaxy-fox-token/commit/c465c73160d9f81f448236ec83bd0888223dfec4)
 
 ## Issue 7 (page 15)
 
-resolved => a4175cbe7c61a46bd47d835cd288e2c0fb8fecf6
+resolved => [a4175cbe7c61a46bd47d835cd288e2c0fb8fecf6](https://github.com/humanshield89/galaxy-fox-token/commit/a4175cbe7c61a46bd47d835cd288e2c0fb8fecf6)
 
 ## Issue 8: (page 16)
 
@@ -56,11 +56,11 @@ Already covered in MEE page 9 issue 2 (same issue related to missing events mayb
 
 ## Issue 9 (page 19) 
 
-resolved => 74b05bad55c7576d32c7306df0ee4e22203232c3
+resolved => [74b05bad55c7576d32c7306df0ee4e22203232c3](https://github.com/humanshield89/galaxy-fox-token/commit/74b05bad55c7576d32c7306df0ee4e22203232c3)
 
 ## Issue 10 (page 20)
 
-resolved => ee718d62704af83dcecef7e054104b5a03290915
+resolved => [ee718d62704af83dcecef7e054104b5a03290915](https://github.com/humanshield89/galaxy-fox-token/commit/ee718d62704af83dcecef7e054104b5a03290915)
 
 ## Issue 11 (page 21)
-resolved => 738eea805808872f4e34c42e84bf32b18f85f816
+resolved => [738eea805808872f4e34c42e84bf32b18f85f816](https://github.com/humanshield89/galaxy-fox-token/commit/738eea805808872f4e34c42e84bf32b18f85f816)
