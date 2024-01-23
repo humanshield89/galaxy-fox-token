@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
@@ -402,9 +403,25 @@ contract GalaxyFox is ERC20, Ownable {
         if (inswap == 1) return;
         inswap = 1;
         if (liquidityReserves > miniBeforeLiquify) {
-            uint256 half = liquidityReserves / 2;
+            // get reserves from pair
+            (uint256 reserves0, uint256 reserves1, ) = IUniswapV2Pair(uniPair)
+                .getReserves();
+
+            // Check Uniswap library sortTokens (token0 < token1)
+            uint256 tokenReserves = address(this) < weth
+                ? reserves0
+                : reserves1;
+
+            // swap capped at 10% of the reserves which is tecnically 5% because we only swap half
+            uint256 maxToSwap = (tokenReserves * 10) / 100;
+
+            uint256 toswap = liquidityReserves > maxToSwap
+                ? maxToSwap
+                : liquidityReserves;
+
+            uint256 half = toswap / 2;
             // avoids precision loss
-            uint256 otherHalf = liquidityReserves - half;
+            uint256 otherHalf = toswap - half;
 
             _swapTokensForEth(half);
 
@@ -412,7 +429,7 @@ contract GalaxyFox is ERC20, Ownable {
 
             _addLiquidity(otherHalf, newBalance);
 
-            liquidityReserves = 0;
+            liquidityReserves -= toswap;
         }
         inswap = 0;
     }
