@@ -401,8 +401,9 @@ contract GalaxyFox is ERC20, Ownable {
 
     function _liquify() private {
         if (inswap == 1) return;
-        inswap = 1;
+
         if (liquidityReserves > miniBeforeLiquify) {
+            inswap = 1;
             // get reserves from pair
             (uint256 reserves0, uint256 reserves1, ) = IUniswapV2Pair(uniPair)
                 .getReserves();
@@ -430,8 +431,8 @@ contract GalaxyFox is ERC20, Ownable {
             _addLiquidity(otherHalf, newBalance);
 
             liquidityReserves -= toswap;
+            inswap = 0;
         }
-        inswap = 0;
     }
 
     function _swapTokensForEth(uint256 tokenAmount) internal {
